@@ -1,7 +1,7 @@
 // Run the code: node server.js
 
 const http = require('http');
-const port = 8001;
+const port = process.env.port || 1337;
 const mysql = require('mysql');
 const { stringify } = require('querystring');
 const connection = mysql.createConnection({
