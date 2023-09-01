@@ -1,58 +1,40 @@
-// Run the code: node server.js
-
-const http = require('http');
-const port = 1337;
+const express = require('express');
 const mysql = require('mysql');
-const { stringify } = require('querystring');
-const connection = mysql.createConnection({
-    host     : 'sql3.freesqldatabase.com',
-    user     : 'sql3643696',
-    password : 'PiRwG3wfKP',
-    database : 'sql3643696'
+
+// Create a MySQL database connection
+const db = mysql.createConnection({
+  host: 'sql3.freesqldatabase.com',
+  user: 'sql3643696',
+  password: 'PiRwG3wfKP',
+  database: 'sql3643696',
+});
+
+// Connect to the database
+db.connect((err) => {
+  if (err) {
+    console.error('Error connecting to the database:', err);
+  } else {
+    console.log('Connected to the database');
+  }
+});
+
+const app = express();
+const port = process.env.PORT || 3000;
+
+// Define a simple API endpoint
+app.get('/', (req, res) => {
+  // Example query to retrieve data from a table
+  db.query('SELECT * FROM Industry', (error, results, fields) => {
+    if (error) {
+      console.error('Error executing the query:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      res.json(results);
+    }
   });
+});
 
-connection.connect();
-
-const label = 'Dr. Bob\'s Network API';
-
-const requestListener = function (req, res) {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Credentials", "true");
-    res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
-    res.setHeader("Access-Control-Max-Age", "3600");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, remember-me");
-    // res.writeHead(200);
-
-    let body = '';
-    req.on('data', (chunk) => {body += chunk});        
-    console.log('Recieved a request: ' + req.url);
-    switch(req.url) {
-    case "/network":
-        req.on('end', () => {
-            try{
-                connection.query(
-                    'SELECT * FROM Industry ', function(err, results) {
-                    if(err) throw err;
-                    if(results == null || results.length == 0) res.write('null', function(err) {res.end();})
-                    else res.write(JSON.stringify(results), function(err) {res.end();});
-                });
-            } catch(error) { res.end();}
-        });
-        break;
-   
-    default:
-        res.write(label, function(err) {res.end();})
-  } 
-}
-
-const server = http.createServer(requestListener);
-console.log(`Express server listening on port ` + port);
-
-server.listen(port);
-
-// create table BACKORDER (ID int not null PRIMARY KEY auto_increment, Name varchar(255) not null, PurchasePrice varchar(7) )
-// create table FAMILY (ID int not null PRIMARY KEY auto_increment, Name varchar(255) not null, Date char(10) not null, SalePrice varchar(7), PurchasePrice varchar(7), Products varchar(255))
-// create table EXPIRYUPDATE (ID int not null PRIMARY KEY auto_increment, Date char(10) not null)
-// alter table monthly drop column gst
-// update monthly set salerevenue = salerevenue + visitrevenue
-// alter table monthly drop column visitrevenue
+// Start the server
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});

@@ -6,6 +6,7 @@
   "dependencies": {
     "bignumber.js": "^9.0.0",
     "core-util-is": "^1.0.3",
+    "express": "^4.18.2",
     "inherits": "^2.0.4",
     "isarray": "^1.0.0",
     "mysql": "^2.18.1",

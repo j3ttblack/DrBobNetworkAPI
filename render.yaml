@@ -1,0 +1,7 @@
+services:
+  - name: nodejs
+    env:
+      - key: NODE_ENV
+        value: production
+    buildCommand: npm install && npm run build
+    startCommand: node server.js
