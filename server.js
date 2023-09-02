@@ -1,6 +1,7 @@
 const express = require('express');
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 // Create a MySQL database connection
 const db = mysql.createConnection({
@@ -22,6 +23,7 @@ db.connect((err) => {
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
 
 const port = process.env.PORT || 3000;
 
@@ -47,11 +49,14 @@ function getTable(path) {
 }
 
 // All get requests
-app.get('/', (req, res) => {
+app.get('/:parameter', (req, res) => {
+
+  console.log(req.path)
 
   // Get the table
   let tableName = getTable(req.path);
   if(!tableName) {
+    console.log('table name not found')
     res.status(404).json({ error: 'Not Found' });
     return;
   }
