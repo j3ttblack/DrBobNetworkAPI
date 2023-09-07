@@ -171,10 +171,10 @@ app.delete('/:table/:id1/:id2', (req, res) => {
   }
 
   // Build the DELETE SQL statement dynamically
-  const sql = `DELETE FROM ${normalizedTableName} WHERE person_id_1 = ? AND person_id_2 = ?`;
+  const sql = `DELETE FROM ${normalizedTableName} WHERE (person_id_1 = ? AND person_id_2 = ?) OR (person_id_1 = ? AND person_id_2 = ?)`;
 
   // Execute the query to delete data
-  db.query(sql, [id1, id2], (error, results) => {
+  db.query(sql, [id1, id2, id2, id1], (error, results) => {
     if (error) {
       console.error('Error executing the query:', error);
       res.status(500).json({ error: 'Internal Server Error' });
